@@ -1,7 +1,8 @@
-module processor(clk, reset);
+module processor(clk, reset, Rd1, Rd2);
 input clk, reset;
+output [31:0]Rd1,Rd2;
 
-wire [31:0] PC_out, instruction_out, Rd1, Rd2, ImmExt, m1_out, Adder_out, NextoPC, m2_out, m3_out, aluresult, MemData_out;
+wire [31:0] PC_out, instruction_out,ImmExt, m1_out, Adder_out, NextoPC, m2_out, m3_out, aluresult, MemData_out;
 wire [3:0] ALU_control;
 wire [1:0] ALUOp;
 wire RegWrite, ALUSrc, zero, branch, and_out, MemtoReg, MemWrite, MemRead;

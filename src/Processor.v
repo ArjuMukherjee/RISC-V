@@ -5,7 +5,7 @@ output [31:0]Rd1,Rd2;
 wire [31:0] PC_out, instruction_out,ImmExt, m1_out, Adder_out, NextoPC, m2_out, m3_out, aluresult, MemData_out;
 wire [3:0] ALU_control;
 wire [1:0] ALUOp;
-wire RegWrite, ALUSrc, zero, branch, and_out, MemtoReg, MemWrite, MemRead;
+wire RegWrite, ALUSrc, zero, branch, and_out, MemtoReg, MemWrite, MemRead, branch_control, ecall;
 
 // Program Counter
 PC PC(.clk(clk), .reset(reset), .PC_in(m2_out), .PC_out(PC_out));
@@ -31,7 +31,8 @@ CTRL_UNIT CTRL_UNIT(
     .ALUOp(ALUOp),
     .MemWrite(MemWrite),
     .ALUSrc(ALUSrc),
-    .RegWrite(RegWrite)
+    .RegWrite(RegWrite),
+    .ecall(ecall)
 );
 
 // ALU Control
@@ -53,11 +54,20 @@ Mux m1(.sel(ALUSrc),.A(Rd2),.B(ImmExt),.Mux_out(m1_out));
 // ADDER
 ADD ADD(.in_1(PC_out),.in_2(ImmExt),.out(Adder_out));
 
-// AND
-AND AND(.branch(branch), .zero(zero), .and_out(and_out));
+// Branch Unit
+Branch_Unit Branch_Unit (
+    .rs1(Rd1),
+    .rs2(Rd2),
+    .func3(instruction_out[14:12]),
+    .branch(branch),
+    .branch_out(branch_control)
+);
+
+//// AND
+//AND AND(.branch(branch), .zero(branch_control), .and_out(and_out));
 
 // MUX2
-Mux m2(.sel(and_out),.A(NextoPC),.B(Adder_out),.Mux_out(m2_out));
+Mux m2(.sel(branch_control),.A(NextoPC),.B(Adder_out),.Mux_out(m2_out));
 
 // DATA MEMORY
 DATA_MEM DATA_MEM(
@@ -72,5 +82,13 @@ DATA_MEM DATA_MEM(
 
 // MUX3
 Mux m3(.sel(MemtoReg),.A(aluresult),.B(MemData_out),.Mux_out(m3_out));
+
+always @(posedge clk) begin
+    if (ecall) begin
+        $display("System instruction encountered: ECALL");
+        $stop;
+    end
+end
+
 
 endmodule

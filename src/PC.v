@@ -9,7 +9,7 @@ begin
 
 if(reset)
     PC_out <= 32'b00;
-else if (PC_out >= 6'd63)
+else if (PC_out >= 6'd60)
     PC_out <= 32'b0; 
 else
     PC_out <= PC_in;

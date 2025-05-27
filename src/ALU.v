@@ -14,7 +14,13 @@ begin
     4'b0001: begin zero <= 0; ALU_Result <= A | B; end
     4'b0010: begin zero <= 0; ALU_Result <= A + B; end
     4'b0110: begin if(A==B) zero <= 1; else zero <= 0; ALU_Result <= A - B; end
-    default: begin zero <= 0; end
+    4'b0011: begin zero <= 0; ALU_Result <= A ^ B; end
+    4'b0100: begin zero <= 0; ALU_Result <= A << B[4:0]; end
+    4'b0101: begin zero <= 0; ALU_Result <= A >> B[4:0]; end
+    4'b1001: begin zero <= 0; ALU_Result <= $signed(A) >>> B[4:0]; end
+    4'b0111: begin zero <= 0; ALU_Result <= ($signed(A) < $signed(B)) ? 32'd1 : 32'd0; end
+    4'b1000: begin zero <= 0; ALU_Result <= (A < B) ? 32'd1 : 32'd0; end
+    default: begin zero <= 0; ALU_Result <= 32'b00; end
     endcase
 end
 endmodule

@@ -63,9 +63,6 @@ Branch_Unit Branch_Unit (
     .branch_out(branch_control)
 );
 
-//// AND
-//AND AND(.branch(branch), .zero(branch_control), .and_out(and_out));
-
 // MUX2
 Mux m2(.sel(branch_control),.A(NextoPC),.B(Adder_out),.Mux_out(m2_out));
 
